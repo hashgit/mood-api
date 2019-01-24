@@ -1,0 +1,38 @@
+import joi from 'joi';
+
+/**
+ * @swagger
+ * definitions:
+ *   MoodModel:
+ *     type: object
+ *     properties:
+ *       id:
+ *         type: string
+ *       mood:
+ *         type: string,
+ *       note:
+ *         type: string
+ */
+
+export default class MoodModel {
+  /* istanbul ignore next */
+  constructor({
+    id,
+    mood,
+    note,
+  } = {}) {
+    this.id = id;
+    this.mood = mood;
+    this.note = note;
+  }
+
+  // This is being used in controller which we don't unit test
+  /* istanbul ignore next */
+  static get CONSTRAINTS() {
+    return joi.object({
+      id: joi.string(),
+      mood: joi.string().valid('Happy', 'Sad', 'Neutral').required(),
+      note: joi.string(),
+    });
+  }
+}
