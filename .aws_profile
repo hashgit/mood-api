@@ -1,0 +1,9 @@
+[default]
+aws_access_key_id=AKIAJH7LSTH3GMJM35ZQ
+aws_secret_access_key=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
+[tst]
+source_profile=default
+[stg]
+source_profile=default
+[prd]
+source_profile=default
