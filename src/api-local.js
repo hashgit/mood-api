@@ -6,6 +6,7 @@ import LogService from './services/log-service';
 
 const port = process.env.PORT || 3000;
 
+// Initialize the app.
 const app = express();
 app.set('storageMock', []);
 app

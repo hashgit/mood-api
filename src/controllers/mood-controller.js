@@ -1,14 +1,14 @@
 import express from 'express';
 // Use mock repo
-// import moodRepo from '../repos/mood-repo';
-import MoodRepoMock from '../repos/mock-mood-repo';
+import MoodRepo from '../repos/mood-repo';
+// import MoodRepoMock from '../repos/mock-mood-repo';
 import MoodService from '../services/mood-service';
 import MoodModel from '../domain/mood-model';
 
 const router = new express.Router();
 
 router.use((req, res, next) => {
-  req.moodRepo = new MoodRepoMock({ log: req.log, storage: req.app.get('storageMock') });
+  req.moodRepo = new MoodRepo({ log: req.log });
   req.moodService = new MoodService({ moodRepo: req.moodRepo, log: req.log });
   next();
 });
@@ -35,8 +35,6 @@ router.use((req, res, next) => {
  *        description: mood retrieved
  *      400:
  *        description: The request was rejected - missing ID
- *      403:
- *        description: Forbidden - specify a valid x-api-key value
  *      404:
  *        description: Object not found
  *      500:
@@ -109,8 +107,6 @@ router.get('/:id', async (req, res) => {
  *        description: mood retrieved
  *      400:
  *        description: The request was rejected - incorrect query param
- *      403:
- *        description: Forbidden - specify a valid x-api-key value
  *      500:
  *        description: Internal server error
  */
@@ -163,8 +159,6 @@ router.get('/', async (req, res) => {
  *        description: mood created
  *      400:
  *        description: The request was rejected - validation failed
- *      403:
- *        description: Forbidden - specify a valid x-api-key value
  *      500:
  *        description: Internal server error
  */
@@ -229,8 +223,6 @@ router.post('/', async (req, res) => {
  *        description: mood created
  *      400:
  *        description: The request was rejected - validation failed
- *      403:
- *        description: Forbidden - specify a valid x-api-key value
  *      500:
  *        description: Internal server error
  */
