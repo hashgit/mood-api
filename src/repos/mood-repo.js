@@ -2,6 +2,7 @@ import { MongoClient } from 'mongodb';
 import moment from 'moment';
 
 import LogService from '../services/log-service';
+import Response400Exception from '../exceptions/response-400-exception';
 
 /**
  * The mood repository
@@ -66,9 +67,9 @@ export default class MoodRepo {
 
     const result = await this.execute(db => db
       .collection(this.moodCollection)
-      .insertOne(mood));
+      .insertOne({ _id: id, ...mood }));
 
-    return result.insertedCount === 1;
+    return result && result.insertedCount === 1;
   }
 
   /**
@@ -89,9 +90,9 @@ export default class MoodRepo {
     const updateModel = { note, updatedDateTime };
     const result = await this.execute(db => db
       .collection(this.moodCollection)
-      .updateOne({ id }, { $set: updateModel }));
+      .updateOne({ _id: id }, { $set: updateModel }));
 
-    return result.modifiedCount === 1;
+    return result && result.modifiedCount === 1;
   }
 
   /**
@@ -118,6 +119,9 @@ export default class MoodRepo {
       const db = client.db();
 
       result = await dbCommand(db);
+    } catch (err) {
+      this.log.error(err);
+      throw new Response400Exception('Mood already exist');
     } finally {
       if (client && client.close) {
         client.close();

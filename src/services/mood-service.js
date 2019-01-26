@@ -57,14 +57,6 @@ export default class MoodService {
       id, mood, timestamp, note,
     } = model;
 
-    if (id) {
-      const existingMood = await this.moodRepo.find(id);
-
-      if (existingMood) {
-        throw new Error('Mood already exists', id);
-      }
-    }
-
     const moodEntity = new Mood({
       id, mood, timestamp, note,
     });
