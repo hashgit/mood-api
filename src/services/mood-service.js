@@ -49,13 +49,6 @@ export default class MoodService {
 
     this.log.info('Creating mood', moodEntity);
     await this.moodRepo.save(moodEntity);
-
-    // TODO: This is for demonstration only
-    // Invoke another micro service from this micro service
-    //
-    // this.loyaltyService.create(mood)
-    //   .catch(error => this.log.error('Subscribing user failed', error));
-
     return moodEntity;
   }
 

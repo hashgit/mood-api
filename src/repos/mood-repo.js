@@ -35,6 +35,37 @@ export default class MoodRepo {
     const db = client.db();
 
     const items = await db.collection(this.moodCollection).find({}).toArray();
+    client.close();
     return items;
+  }
+
+  /**
+   * Creates or updates a mood
+   * @param {Mood} mood The mood
+   */
+  async save(mood) {
+    if (!mood) {
+      throw new Error('Mood is required');
+    }
+
+    const { id } = mood;
+
+    if (!id) {
+      throw new Error('Mood ID is required');
+    }
+
+    let client;
+
+    try {
+      client = await MongoClient.connect(this.MONGODB_URI, { useNewUrlParser: true });
+      const db = client.db();
+      await db
+        .collection(this.moodCollection)
+        .updateOne({ id }, { $set: mood }, { upsert: true });
+    } finally {
+      if (client && client.close) {
+        client.close();
+      }
+    }
   }
 }
