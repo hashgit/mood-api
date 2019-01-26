@@ -54,7 +54,7 @@ router.get('/:id', async (req, res) => {
 
   try {
     req.log.info(`Fetching mood by ID ${id}`);
-    const mood = await req.moodRepo.find(id);
+    const mood = await req.moodService.find(id);
 
     if (mood) {
       return res.json({
