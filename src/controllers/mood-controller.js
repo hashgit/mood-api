@@ -178,7 +178,6 @@ router.post('/', async (req, res) => {
     }
 
     const mood = await req.moodService.create(model);
-    req.log.info(req.app.locals.storageMock);
     return res.json({
       data: {
         type: 'mood',
@@ -241,14 +240,8 @@ router.put('/', async (req, res) => {
       });
     }
 
-    const mood = await req.moodService.update(model);
-    return res.json({
-      data: {
-        type: 'mood',
-        id: mood.id,
-        attributes: mood,
-      },
-    });
+    const result = await req.moodService.update(model);
+    return res.status(result ? 200 : 404);
   } catch (error) {
     req.log.error('mood update failed', error);
     return res.status(error.status || 500).json({
