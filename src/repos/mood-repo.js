@@ -31,11 +31,20 @@ export default class MoodRepo {
     // we could reuse this db connection across requests but
     // this test application will not be used much
 
-    const client = await MongoClient.connect(this.MONGODB_URI, { useNewUrlParser: true });
-    const db = client.db();
+    let items;
+    let client;
 
-    const items = await db.collection(this.moodCollection).find({}).toArray();
-    client.close();
+    try {
+      client = await MongoClient.connect(this.MONGODB_URI, { useNewUrlParser: true });
+      const db = client.db();
+
+      items = await db.collection(this.moodCollection).find({}).toArray();
+    } finally {
+      if (client && client.close) {
+        client.close();
+      }
+    }
+
     return items;
   }
 
@@ -67,5 +76,29 @@ export default class MoodRepo {
         client.close();
       }
     }
+  }
+
+  /**
+   * Finds a mood by ID
+   * @param {string} id The mood ID
+   * @returns {Promise<Mood>}
+   */
+  /* istanbul ignore next */
+  async find(id) {
+    let item;
+    let client;
+
+    try {
+      client = await MongoClient.connect(this.MONGODB_URI, { useNewUrlParser: true });
+      const db = client.db();
+
+      item = await db.collection(this.moodCollection).findOne({ id });
+    } finally {
+      if (client && client.close) {
+        client.close();
+      }
+    }
+
+    return item;
   }
 }
