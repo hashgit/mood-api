@@ -15,10 +15,12 @@ export default class MoodRepo {
   /* istanbul ignore next */
   constructor({
     log,
+    dbClient,
   } = {}) {
     this.MONGODB_URI = process.env.MONGODB_URI;
     this.log = log || new LogService();
     this.moodCollection = process.env.MOOD_COLLECTION || 'moods';
+    this.mongoClient = dbClient || MongoClient;
   }
 
   /**
@@ -115,13 +117,17 @@ export default class MoodRepo {
     let result = null;
 
     try {
-      client = await MongoClient.connect(this.MONGODB_URI, { useNewUrlParser: true });
+      client = await this.mongoClient.connect(this.MONGODB_URI, { useNewUrlParser: true });
       const db = client.db();
 
       result = await dbCommand(db);
     } catch (err) {
       this.log.error(err);
-      throw new Response400Exception('Mood already exist');
+      if (err.code === 11000) {
+        throw new Response400Exception('Mood already exists');
+      }
+
+      throw new Error(err.message);
     } finally {
       if (client && client.close) {
         client.close();

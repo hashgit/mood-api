@@ -1,4 +1,5 @@
 import Mood from '../domain/mood';
+import MoodModel from '../domain/mood-model';
 import LogService from './log-service';
 import Response404Exception from '../exceptions/response-404-exception';
 
@@ -39,9 +40,9 @@ export default class MoodService {
       timestamp, mood, note,
     } = await this.moodRepo.find(moodId);
 
-    return {
+    return new MoodModel({
       id, timestamp, mood, note,
-    };
+    });
   }
 
   /**
