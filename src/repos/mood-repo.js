@@ -48,7 +48,7 @@ export default class MoodRepo {
   }
 
   /**
-   * Creates or updates a mood
+   * Creates a mood
    * @param {Mood} mood The mood
    */
   async save(mood) {
@@ -67,9 +67,48 @@ export default class MoodRepo {
     try {
       client = await MongoClient.connect(this.MONGODB_URI, { useNewUrlParser: true });
       const db = client.db();
-      await db
+      const result = await db
         .collection(this.moodCollection)
-        .updateOne({ id }, { $set: mood }, { upsert: true });
+        .insertOne(mood);
+
+      return result.insertedCount === 1;
+    } catch (err) {
+      throw new Error(err);
+    } finally {
+      if (client && client.close) {
+        client.close();
+      }
+    }
+  }
+
+  /**
+   * Updates a mood
+   * @param {Mood} mood The mood
+   */
+  async update(mood) {
+    if (!mood) {
+      throw new Error('Mood is required');
+    }
+
+    const { id, note, updatedDateTime } = mood;
+
+    if (!id) {
+      throw new Error('Mood ID is required');
+    }
+
+    let client;
+
+    try {
+      const updateModel = { note, updatedDateTime };
+      client = await MongoClient.connect(this.MONGODB_URI, { useNewUrlParser: true });
+      const db = client.db();
+      const result = await db
+        .collection(this.moodCollection)
+        .updateOne({ id }, { $set: updateModel });
+
+      return result.modifiedCount === 1;
+    } catch (err) {
+      throw new Error(err);
     } finally {
       if (client && client.close) {
         client.close();

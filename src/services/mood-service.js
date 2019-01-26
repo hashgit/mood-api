@@ -77,8 +77,8 @@ export default class MoodService {
     }
 
     this.log.info('Creating mood', moodEntity);
-    await this.moodRepo.save(moodEntity);
-    return moodEntity;
+    const result = await this.moodRepo.save(moodEntity);
+    return result ? moodEntity : null;
   }
 
   /**
@@ -90,18 +90,14 @@ export default class MoodService {
       throw new Error('Mood model is required');
     }
 
-    const { id } = model;
-    const mood = await this.moodRepo.find(id);
+    const { id, note } = model;
 
-    if (!mood) {
-      throw new Response404Exception('Mood not found');
-    }
-
-    mood.updatedDateTime = moment.utc().format();
+    const mood = new Mood({
+      id, note,
+    });
 
     this.log.info('Updating mood', mood);
-    await this.moodRepo.save(mood);
-
-    return mood;
+    const result = await this.moodRepo.update(mood);
+    return result;
   }
 }

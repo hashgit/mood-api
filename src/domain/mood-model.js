@@ -34,7 +34,7 @@ export default class MoodModel {
     return joi.object({
       id: joi.string(),
       timestamp: joi.date(),
-      mood: joi.string().valid('Happy', 'Sad', 'Neutral').required(),
+      mood: joi.string().valid('Happy', 'Sad', 'Neutral'),
       note: joi.string(),
     });
   }
