@@ -2,7 +2,6 @@ import _ from 'lodash';
 import { MongoClient } from 'mongodb';
 
 import LogService from '../services/log-service';
-import Mood from '../domain/mood';
 
 /**
  * The mood repository

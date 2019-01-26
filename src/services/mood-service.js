@@ -32,6 +32,21 @@ export default class MoodService {
   }
 
   /**
+   * Find Mood by id
+   * @param {uuid} id
+   */
+  async find(moodId) {
+    const {
+      id,
+      timestamp, mood, note,
+    } = await this.moodRepo.find(moodId);
+
+    return {
+      id, timestamp, mood, note,
+    };
+  }
+
+  /**
    * Create Mood from MoodModel
    * @param {MoodModel} model
    */
