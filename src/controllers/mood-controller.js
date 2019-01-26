@@ -112,11 +112,11 @@ router.get('/:id', async (req, res) => {
  */
 router.get('/', async (req, res) => {
   try {
-    // For now we are returning all moods from DB
-    // /mood
+    const { startDate, endDate } = req.query;
+
     req.log.info('Fetching all moods');
 
-    const moods = await req.moodService.getAll();
+    const moods = await req.moodService.getAll({ startDate, endDate });
     return res.json({
       data: moods.map(mood => ({
         type: 'mood',
@@ -164,7 +164,9 @@ router.get('/', async (req, res) => {
  */
 router.post('/', async (req, res) => {
   try {
-    const model = new MoodModel({ id: req.body.id, mood: req.body.mood, note: req.body.note });
+    const model = new MoodModel({
+      id: req.body.id, mood: req.body.mood, note: req.body.note, timestamp: req.body.timestamp,
+    });
     const validation = MoodModel.CONSTRAINTS.validate(model);
 
     if (validation.error) {
@@ -177,14 +179,8 @@ router.post('/', async (req, res) => {
       });
     }
 
-    const mood = await req.moodService.create(model);
-    return res.json({
-      data: {
-        type: 'mood',
-        id: mood.id,
-        attributes: mood,
-      },
-    });
+    await req.moodService.create(model);
+    return res.sendStatus(200);
   } catch (error) {
     req.log.error('Creating of mood failed', error);
     return res.status(error.status || 500).json({
@@ -240,8 +236,8 @@ router.put('/', async (req, res) => {
       });
     }
 
-    const result = await req.moodService.update(model);
-    return res.send(result ? 200 : 404);
+    await req.moodService.update(model);
+    return res.sendStatus(200);
   } catch (error) {
     req.log.error('mood update failed', error);
     return res.status(error.status || 500).json({

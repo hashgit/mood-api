@@ -1,5 +1,3 @@
-import moment from 'moment';
-
 import Mood from '../domain/mood';
 import LogService from './log-service';
 import Response404Exception from '../exceptions/response-404-exception';
@@ -20,8 +18,8 @@ export default class MoodService {
   /**
    * get all moods
    */
-  async getAll() {
-    const items = await this.moodRepo.getAll();
+  async getAll(qry) {
+    const items = await this.moodRepo.getAll(qry);
 
     return items.map(item => ({
       id: item.id,
@@ -70,6 +68,7 @@ export default class MoodService {
     const moodEntity = new Mood({
       id, mood, timestamp, note,
     });
+    this.log.info(moodEntity);
     const validation = Mood.CONSTRAINTS.validate(moodEntity);
 
     if (validation.error) {
@@ -78,7 +77,12 @@ export default class MoodService {
 
     this.log.info('Creating mood', moodEntity);
     const result = await this.moodRepo.save(moodEntity);
-    return result ? moodEntity : null;
+
+    if (!result) {
+      throw new Error('Failed to create mood object');
+    }
+
+    return moodEntity;
   }
 
   /**
@@ -98,6 +102,11 @@ export default class MoodService {
 
     this.log.info('Updating mood', mood);
     const result = await this.moodRepo.update(mood);
+
+    if (!result) {
+      throw new Response404Exception();
+    }
+
     return result;
   }
 }

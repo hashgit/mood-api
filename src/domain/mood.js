@@ -24,10 +24,10 @@ export default class Mood {
     note,
   } = {}) {
     this.id = id || uuidV4();
-    this.version = version || '2018-11-23';
+    this.version = version || '2019-01-25';
     this.createdDateTime = createdDateTime || moment.utc().format();
-    this.updatedDateTime = updatedDateTime;
-    this.timestamp = timestamp || moment.utc().format();
+    this.updatedDateTime = updatedDateTime || moment.utc().format();
+    this.timestamp = (timestamp && moment.utc(timestamp).format()) || moment.utc().format();
     this.mood = mood;
     this.note = note;
   }

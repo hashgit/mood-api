@@ -1,5 +1,5 @@
-import _ from 'lodash';
 import { MongoClient } from 'mongodb';
+import moment from 'moment';
 
 import LogService from '../services/log-service';
 
@@ -25,25 +25,27 @@ export default class MoodRepo {
    * @returns {Promise<Mood[]>}
    */
   /* istanbul ignore next */
-  async getAll() {
+  async getAll({ startDate, endDate }) {
     // Connect to the database
     // we could reuse this db connection across requests but
     // this test application will not be used much
+    this.log.info({ startDate, endDate });
 
-    let items;
-    let client;
-
-    try {
-      client = await MongoClient.connect(this.MONGODB_URI, { useNewUrlParser: true });
-      const db = client.db();
-
-      items = await db.collection(this.moodCollection).find({}).toArray();
-    } finally {
-      if (client && client.close) {
-        client.close();
-      }
+    const qry = {};
+    if (startDate) {
+      qry.$gte = moment.utc(startDate).format();
     }
 
+    if (endDate) {
+      qry.$lte = moment.utc(endDate).format();
+    }
+
+    const findQry = {};
+    if (qry.$gte || qry.$lte) {
+      findQry.timestamp = qry;
+    }
+
+    const items = await this.execute(db => db.collection(this.moodCollection).find(findQry).toArray());
     return items;
   }
 
@@ -62,23 +64,11 @@ export default class MoodRepo {
       throw new Error('Mood ID is required');
     }
 
-    let client;
+    const result = await this.execute(db => db
+      .collection(this.moodCollection)
+      .insertOne(mood));
 
-    try {
-      client = await MongoClient.connect(this.MONGODB_URI, { useNewUrlParser: true });
-      const db = client.db();
-      const result = await db
-        .collection(this.moodCollection)
-        .insertOne(mood);
-
-      return result.insertedCount === 1;
-    } catch (err) {
-      throw new Error(err);
-    } finally {
-      if (client && client.close) {
-        client.close();
-      }
-    }
+    return result.insertedCount === 1;
   }
 
   /**
@@ -96,24 +86,12 @@ export default class MoodRepo {
       throw new Error('Mood ID is required');
     }
 
-    let client;
+    const updateModel = { note, updatedDateTime };
+    const result = await this.execute(db => db
+      .collection(this.moodCollection)
+      .updateOne({ id }, { $set: updateModel }));
 
-    try {
-      const updateModel = { note, updatedDateTime };
-      client = await MongoClient.connect(this.MONGODB_URI, { useNewUrlParser: true });
-      const db = client.db();
-      const result = await db
-        .collection(this.moodCollection)
-        .updateOne({ id }, { $set: updateModel });
-
-      return result.modifiedCount === 1;
-    } catch (err) {
-      throw new Error(err);
-    } finally {
-      if (client && client.close) {
-        client.close();
-      }
-    }
+    return result.modifiedCount === 1;
   }
 
   /**
@@ -123,20 +101,29 @@ export default class MoodRepo {
    */
   /* istanbul ignore next */
   async find(id) {
-    let item;
+    const item = await this.execute(db => db.collection(this.moodCollection).findOne({ id }));
+    return item;
+  }
+
+  /**
+   * execute dbCommand
+   * @param {func} dbCommand
+   */
+  async execute(dbCommand) {
     let client;
+    let result = null;
 
     try {
       client = await MongoClient.connect(this.MONGODB_URI, { useNewUrlParser: true });
       const db = client.db();
 
-      item = await db.collection(this.moodCollection).findOne({ id });
+      result = await dbCommand(db);
     } finally {
       if (client && client.close) {
         client.close();
       }
     }
 
-    return item;
+    return result;
   }
 }

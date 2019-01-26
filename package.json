@@ -10,7 +10,7 @@
     "build": "npm run build:lint && npm run build:clean && npm run build:compile",
     "deploy": "serverless deploy",
     "deploy:tst": "npm run deploy -- --aws-profile tst",
-    "start": "babel-node src/api-local.js -r dotenv/config",
+    "start": "node -r dotenv/config -r babel-core/register src/api-local.js",
     "test": "npm run build:lint && npm run test:unit",
     "test:unit": "cross-env NODE_ENV=test nyc mocha --recursive test/unit"
   },
