@@ -116,7 +116,7 @@ router.get('/', async (req, res) => {
     // /mood
     req.log.info('Fetching all moods');
 
-    const moods = await req.moodRepo.getAll();
+    const moods = await req.moodService.getAll();
     return res.json({
       data: moods.map(mood => ({
         type: 'mood',

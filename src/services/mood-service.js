@@ -18,6 +18,20 @@ export default class MoodService {
   }
 
   /**
+   * get all moods
+   */
+  async getAll() {
+    const items = await this.moodRepo.getAll();
+
+    return items.map(item => ({
+      id: item.id,
+      mood: item.mood,
+      note: item.note,
+      timestamp: item.timestamp,
+    }));
+  }
+
+  /**
    * Create Mood from MoodModel
    * @param {MoodModel} model
    */

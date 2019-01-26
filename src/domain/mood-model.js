@@ -20,10 +20,12 @@ export default class MoodModel {
     id,
     mood,
     note,
+    timestamp,
   } = {}) {
     this.id = id;
     this.mood = mood;
     this.note = note;
+    this.timestamp = timestamp;
   }
 
   // This is being used in controller which we don't unit test
@@ -31,6 +33,7 @@ export default class MoodModel {
   static get CONSTRAINTS() {
     return joi.object({
       id: joi.string(),
+      timestamp: joi.date(),
       mood: joi.string().valid('Happy', 'Sad', 'Neutral').required(),
       note: joi.string(),
     });
