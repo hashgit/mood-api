@@ -241,7 +241,7 @@ router.put('/', async (req, res) => {
     }
 
     const result = await req.moodService.update(model);
-    return res.status(result ? 200 : 404);
+    return res.send(result ? 200 : 404);
   } catch (error) {
     req.log.error('mood update failed', error);
     return res.status(error.status || 500).json({
