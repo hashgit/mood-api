@@ -227,7 +227,7 @@ router.post('/', async (req, res) => {
  */
 router.put('/', async (req, res) => {
   try {
-    const model = new MoodModel({ id: req.body.id, name: req.body.name });
+    const model = new MoodModel({ id: req.body.id, note: req.body.note });
     const validation = MoodModel.CONSTRAINTS.validate(model);
 
     if (validation.error) {
