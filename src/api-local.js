@@ -12,5 +12,5 @@ app.set('storageMock', []);
 app
   .use(LogService.middleware())
   .use(express.json())
-  .use([`/${SERVICE_NAME}`, '/'], moodController)
+  .use([`/api/${SERVICE_NAME}`], moodController)
   .listen(port, () => console.log(`App listening on port ${port}!`)); // eslint-disable-line no-console

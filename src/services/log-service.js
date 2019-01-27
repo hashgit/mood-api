@@ -1,4 +1,5 @@
 import uuidV4 from 'uuid/v4';
+import { SERVICE_NAME } from '../configs/constants';
 
 export default class LogService {
   constructor({
@@ -10,8 +11,7 @@ export default class LogService {
       : [];
     this.context = {
       cid: this.cid,
-      service: process.env.AWS_LAMBDA_FUNCTION_NAME,
-      version: process.env.AWS_LAMBDA_FUNCTION_VERSION,
+      service: SERVICE_NAME,
       ...context,
     };
     this.logger = log || console;
