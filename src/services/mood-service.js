@@ -35,13 +35,17 @@ export default class MoodService {
    * @param {uuid} id
    */
   async find(moodId) {
-    const {
-      id,
-      timestamp, mood, note,
-    } = await this.moodRepo.find(moodId);
+    const moodEntity = await this.moodRepo.find(moodId);
+
+    if (!moodEntity) {
+      throw new Response404Exception('Mood not found');
+    }
 
     return new MoodModel({
-      id, timestamp, mood, note,
+      id: moodEntity.id,
+      timestamp: moodEntity.timestamp,
+      mood: moodEntity.mood,
+      note: moodEntity.note,
     });
   }
 

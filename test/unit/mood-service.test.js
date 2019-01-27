@@ -168,5 +168,16 @@ describe('MoodService', () => {
         expect(item.id).to.be.equal(dbItem.id);
       });
     });
+
+    describe('when item is not found', () => {
+      const service = createService({
+        moodRepo: {
+          find: sinon.stub().resolves(),
+        },
+      });
+
+      it('find throws exception', () =>
+        expect(service.find('id')).to.be.rejectedWith(Response404Exception, 'Mood not found'));
+    });
   });
 });
