@@ -101,7 +101,7 @@ export default class MoodService {
     const result = await this.moodRepo.update(mood);
 
     if (!result) {
-      throw new Response404Exception();
+      throw new Response404Exception('Mood not found');
     }
 
     return result;

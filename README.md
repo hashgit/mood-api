@@ -88,6 +88,12 @@ reusability and unit testing.
 The application stores all data in Mongodb is required in the test to use a nosql database.
 The only reason to chose mongo is that heroku provides a free instance of it.
 
+The timestamp property is not indexed in mongodb hence the start date and end date filter
+is not the most efficient one. A simple index can be added using the statement if
+required.
+
+db.collection(COLLECTION_NAME).create_index({ timestamp: 1 });
+
 # tests
 
 The service and repo layer has been thoroughly tested in the provided unit tests. The
