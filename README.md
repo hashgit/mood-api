@@ -106,5 +106,7 @@ every time. Code coverage apart from controller stands at 85%.
 
 The application does not use any special NPM packages other than what is absolutely required.
 The development environment uses babel for ES6 and mocha/chai/sinon/nyc for unit testing.
+The lint package uses airbnb which I am more comfortable with.
+
 The runtime uses babel packages for runtime, joi for object validation and momentjs for easy
 data formatting and conversions. lodash is only added for the mock storage implementation.
