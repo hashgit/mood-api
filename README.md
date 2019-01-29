@@ -24,9 +24,11 @@ a default value.
 
 After you have the .env file all you need to do is,
 
+```
 npm install
 npm run test
 npm run start
+```
 
 Your API will be up and running at http://<YOUR SERVER NAME>/api/mood and will have the three
 GET, POST AND PUT operations available.
@@ -42,6 +44,7 @@ the git history which have been removed.
 
 A sample request object to create a new mood object
 
+```
 POST /api/mood
 {
 	"mood": "Happy",
@@ -49,24 +52,31 @@ POST /api/mood
 	"note": "Good morning",
 	"timestamp": "2019-01-28T00:34:20"
 }
+```
 
 A sample request to update an existing mood object
 
+```
 PUT /api/mood
 {
 	"id": "c8ea79a5-1c90-46ad-a0f5-0ad6af7df280",
 	"note": "Ahh",
 }
+```
 
 A list of all mood objects can be obtained using the REST API
 
+```
 GET /api/mood?startDate={yyyy-mm-ddThh:mi:ss}&endDate={yyyy-mm-ddThh:mi:ss}
+```
 
 where start date and end date are optional arguments.
 
 A single mood object is retrieved using the URL
 
+```
 GET /api/mood/{uuid}
+```
 
 # design considerations
 
@@ -92,7 +102,9 @@ The timestamp property is not indexed in mongodb hence the start date and end da
 is not the most efficient one. A simple index can be added using the statement if
 required.
 
+```
 db.collection(COLLECTION_NAME).create_index({ timestamp: 1 });
+```
 
 # tests
 
